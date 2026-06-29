@@ -1,5 +1,10 @@
-import React from 'react';
-import { Platform, Pressable, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Dimensions, Platform, Pressable, Text, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import { BookOpen, Clock, Home, Sparkles, User } from 'lucide-react-native';
 import { cn } from '@/utils/cn';
 
@@ -22,6 +27,25 @@ export function BottomNavigation({
     { id: 'profile', label: 'Profile', icon: User },
   ];
 
+  const activeIndex = tabs.findIndex((t) => t.id === activeTab);
+  const translateX = useSharedValue(0);
+
+  const screenWidth = Dimensions.get('window').width;
+  const containerWidth = Math.min(screenWidth - 32, 480); // padding constraints and max size limit
+  const tabWidth = containerWidth / tabs.length;
+
+  useEffect(() => {
+    translateX.value = withSpring(activeIndex * tabWidth, {
+      damping: 18,
+      stiffness: 120,
+    });
+  }, [activeIndex, tabWidth]);
+
+  const indicatorStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+    width: tabWidth,
+  }));
+
   return (
     <View
       className={cn(
@@ -30,7 +54,18 @@ export function BottomNavigation({
         className
       )}
     >
-      <View className="flex-row items-center justify-around w-full max-w-lg mx-auto">
+      <View
+        style={{ width: containerWidth }}
+        className="relative flex-row items-center w-full mx-auto justify-start"
+      >
+        {/* Animated active tab background track indicator */}
+        <Animated.View
+          style={[indicatorStyle, { height: 40, top: 2 }]}
+          className="absolute items-center justify-center z-0"
+        >
+          <View className="w-10 h-10 rounded-2xl bg-primary-500/10 dark:bg-primary-500/20" />
+        </Animated.View>
+
         {tabs.map((tab) => {
           const IconComponent = tab.icon;
           const isActive = activeTab === tab.id;
@@ -39,14 +74,10 @@ export function BottomNavigation({
             <Pressable
               key={tab.id}
               onPress={() => onTabChange?.(tab.id)}
-              className="items-center justify-center py-1.5 px-3 rounded-2xl active:opacity-60"
+              style={{ width: tabWidth }}
+              className="items-center justify-center py-1 rounded-2xl active:opacity-80 z-10"
             >
-              <View
-                className={cn(
-                  'p-2 rounded-xl mb-1 items-center justify-center',
-                  isActive ? 'bg-primary-500/10 dark:bg-primary-500/20' : 'bg-transparent'
-                )}
-              >
+              <View className="h-10 w-10 items-center justify-center rounded-2xl">
                 <IconComponent
                   size={20}
                   color={isActive ? '#8b5cf6' : '#64748b'}
@@ -54,7 +85,7 @@ export function BottomNavigation({
               </View>
               <Text
                 className={cn(
-                  'text-[10px] font-medium tracking-wide',
+                  'text-[9px] font-medium tracking-wide mt-0.5',
                   isActive ? 'text-primary-500 dark:text-primary-400 font-bold' : 'text-secondary-500 dark:text-secondary-400'
                 )}
               >

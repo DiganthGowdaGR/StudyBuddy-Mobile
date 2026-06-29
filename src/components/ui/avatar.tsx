@@ -91,3 +91,71 @@ export function Avatar({
     </View>
   );
 }
+
+// AvatarGroup Subcomponent for clustered friend status listings
+export interface AvatarGroupProps {
+  avatars: { src?: string; name: string }[];
+  size?: 'sm' | 'md' | 'lg';
+  max?: number;
+  className?: string;
+}
+
+export function AvatarGroup({
+  avatars,
+  size = 'sm',
+  max = 3,
+  className,
+}: AvatarGroupProps) {
+  const visibleAvatars = avatars.slice(0, max);
+  const extraCount = avatars.length - max;
+
+  const overlapClasses = {
+    sm: '-mr-2.5',
+    md: '-mr-3.5',
+    lg: '-mr-4.5',
+  };
+
+  const sizeClasses = {
+    sm: 'w-8 h-8 rounded-full',
+    md: 'w-12 h-12 rounded-full',
+    lg: 'w-16 h-16 rounded-full',
+  };
+
+  const extraTextSizes = {
+    sm: 'text-[10px] font-bold',
+    md: 'text-xs font-bold',
+    lg: 'text-sm font-bold',
+  };
+
+  return (
+    <View className={cn('flex-row-reverse items-center justify-end', className)}>
+      {extraCount > 0 && (
+        <View
+          className={cn(
+            'justify-center items-center rounded-full bg-secondary-200 dark:bg-secondary-800 border-2 border-white dark:border-secondary-950 z-10',
+            sizeClasses[size]
+          )}
+        >
+          <Text className={cn('text-secondary-600 dark:text-secondary-400', extraTextSizes[size])}>
+            +{extraCount}
+          </Text>
+        </View>
+      )}
+
+      {visibleAvatars.reverse().map((avatar, idx) => (
+        <Avatar
+          key={avatar.name + '-' + idx}
+          src={avatar.src}
+          name={avatar.name}
+          size={size}
+          className={cn(
+            'border-2 border-white dark:border-secondary-950',
+            overlapClasses[size]
+          )}
+        />
+      ))}
+    </View>
+  );
+}
+
+Avatar.Group = AvatarGroup;
