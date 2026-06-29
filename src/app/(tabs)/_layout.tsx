@@ -18,6 +18,7 @@ export default function TabsLayout() {
         headerShown: false,
       }}
     >
+      <Tabs.Screen name="home" />
       <Tabs.Screen name="library" />
       <Tabs.Screen name="schedule" />
       <Tabs.Screen name="sensei" />

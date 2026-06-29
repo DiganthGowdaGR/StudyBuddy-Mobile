@@ -37,7 +37,7 @@ export default function RootLayout() {
       }
     } else {
       if (inAuthGroup || !segments[0]) {
-        router.replace('/(tabs)/library');
+        router.replace('/(tabs)/home');
       }
     }
   }, [isAuthenticated, segments, appReady]);
