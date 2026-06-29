@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { ScreenContainer, Typography, Card, Header, Icon, Input, Button } from '@/components/ui';
 
 const MOCK_NOTES = [
@@ -27,6 +28,7 @@ const MOCK_NOTES = [
 ];
 
 export default function NotesScreen() {
+  const router = useRouter();
   const [search, setSearch] = useState('');
 
   const filteredNotes = MOCK_NOTES.filter((note) =>
@@ -59,6 +61,7 @@ export default function NotesScreen() {
           {filteredNotes.map((note) => (
             <Card
               key={note.id}
+              onPress={() => router.push({ pathname: '/note-editor', params: { id: note.id, title: note.title } })}
               header={
                 <View className="flex-row justify-between items-center w-full">
                   <Typography variant="h4" className="font-bold">{note.title}</Typography>
