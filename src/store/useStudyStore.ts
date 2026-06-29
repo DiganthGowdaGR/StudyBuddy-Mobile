@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { StudySession, Deck, Flashcard } from '@/types/study';
+import { dbService } from '@/services/dbService';
 
 interface StudyStore {
   sessions: StudySession[];
@@ -14,6 +15,7 @@ interface StudyStore {
   addDeck: (deck: Deck) => void;
   addFlashcard: (card: Flashcard) => void;
   incrementCardCount: (deckId: string) => void;
+  syncRemoteData: (userId: string) => Promise<void>;
 }
 
 export const useStudyStore = create<StudyStore>((set, get) => ({
@@ -64,6 +66,11 @@ export const useStudyStore = create<StudyStore>((set, get) => ({
       activeSession: null,
     }));
 
+    // Sync Pomodoro study session history to DB
+    dbService.createStudySession(finishedSession).catch((e) => {
+      console.warn('Session DB sync deferred', e.message);
+    });
+
     return finishedSession;
   },
 
@@ -75,10 +82,20 @@ export const useStudyStore = create<StudyStore>((set, get) => ({
 
   addDeck: (deck) => {
     set((state) => ({ decks: [deck, ...state.decks] }));
+    
+    // Sync new deck to DB
+    dbService.createDeck(deck).catch((e) => {
+      console.warn('Deck creation DB sync deferred', e.message);
+    });
   },
 
   addFlashcard: (card) => {
     set((state) => ({ flashcards: [...state.flashcards, card] }));
+
+    // Sync new flashcard to DB
+    dbService.createFlashcard(card).catch((e) => {
+      console.warn('Flashcard creation DB sync deferred', e.message);
+    });
   },
 
   incrementCardCount: (deckId) => {
@@ -87,5 +104,24 @@ export const useStudyStore = create<StudyStore>((set, get) => ({
         d.id === deckId ? { ...d, cardCount: d.cardCount + 1 } : d
       ),
     }));
+  },
+
+  syncRemoteData: async (userId) => {
+    try {
+      const decks = await dbService.fetchDecks(userId);
+      set({ decks });
+      
+      // Load cards for each deck in background
+      for (const deck of decks) {
+        const cards = await dbService.fetchFlashcards(deck.id);
+        set((state) => {
+          // avoid duplicates
+          const otherCards = state.flashcards.filter((c) => c.deckId !== deck.id);
+          return { flashcards: [...otherCards, ...cards] };
+        });
+      }
+    } catch (e) {
+      console.warn('Store remote sync deferred', e);
+    }
   },
 }));
