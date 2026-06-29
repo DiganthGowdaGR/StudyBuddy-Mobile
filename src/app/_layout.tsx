@@ -55,6 +55,7 @@ export default function RootLayout() {
         <Stack.Screen name="note-editor" />
         <Stack.Screen name="flashcards-review" />
         <Stack.Screen name="flashcards-create" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="focus-session" />
       </Stack>
     </ThemeProvider>
   );
