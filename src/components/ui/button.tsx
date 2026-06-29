@@ -99,6 +99,10 @@ export function Button({
       onPressOut={handlePressOut}
       disabled={disabled || isLoading}
       className={buttonClasses}
+      accessible={true}
+      accessibilityRole="button"
+      accessibilityLabel={title || 'Button'}
+      accessibilityState={{ disabled: disabled || isLoading, busy: isLoading }}
     >
       {isLoading ? (
         <ActivityIndicator
