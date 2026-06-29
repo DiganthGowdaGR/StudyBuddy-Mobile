@@ -1,56 +1,116 @@
-# Welcome to your Expo app 👋
+# StudyBuddy 🎓
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**StudyBuddy** is a high-fidelity, production-ready mobile study application built with **React Native (Expo)** and backed by a **FastAPI + LangChain + Groq + Supabase** AI and database engine. It integrates gamified learning (XP rewards, study streaks, achievements) with advanced RAG contextual coaching (Sensei AI) and spaced-repetition Leitner study decks.
 
-## Get started
+---
 
-1. Install dependencies
+## 📱 Core App Features
 
+### 1. Authentication & Onboarding
+- **Secure Guards**: Native password inputs, verification overlays, and profile avatar selection screens.
+- **Store Adapter**: Auth session persistence securely mapped to Expo `SecureStore` (native Keychain/Keystore) and web `localStorage`.
+
+### 2. Home Dashboard
+- **Streak Tracker**: Weekly visual flame streaks tracking active study days.
+- **Daily Focus Clock**: Circular progress targets representing studied minutes.
+- **Sensei AI Coaching Card**: Recommendation card generating dynamic study tips.
+
+### 3. Study Planner & Focus Mode
+- **Weekly Calendar Strip**: Selectable horizontal strip filtering daily timetables.
+- **AI Suggested Study Blocks**: Recommendations from Sensei AI. Accepting blocks automatically inserts them into the schedule.
+- **Immersive Focus Screen**: Deep-focus Pomodoro timer featuring play/pause controls and a glowing background breathing guide animated via Reanimated. Completing sessions awards the student **+20 XP**.
+
+### 4. Spaced-Repetition Flashcards
+- **Leitner Boxes Review**: Review cards with progressive repetition intervals (Again, Hard, Good, Easy difficulty keys).
+- **3D Card Flip**: Flips cards 180 degrees using Reanimated 3D transforms (`rotateY`) to reveal answers and AI study clues.
+- **Deck Creation Wizard**: Forms to select parent decks and input questions, answers, and hints.
+
+### 5. Document Library
+- **TEXT/PDF Ingestion Preview**: Detail cards displaying document title, categories, page counts, and indexing statuses.
+- **Cloud Storage Limits Tracker**: Visual progression indicators highlighting storage limit guidelines.
+
+### 6. Rich Notes Workspace
+- **Styling Toolbar**: Text styling selector overlays.
+- **Voice Note Recorder**: Dynamic waveform visualizer indicating audio inputs.
+- **Sparkles drawer**: Floating quick AI sidebar drawer containing prompts like "Explain Simpler", "Give Example", "Summarize".
+
+### 7. Sensei AI Assistant
+- Chat screen equipped with Suggested prompts carousels and bouncing typing indicators.
+- Context-aware responses pulled from uploaded study documents.
+
+### 8. Analytics & Achievements
+- **Knowledge Heatmap**: GitHub-style green contribution grid representing study consistency.
+- **Subject Mastery Radar Chart**: Custom SVG vector graphics mapping subject mastery without external library bloat.
+- **Achievements Badges**: Unlockable reward badges (e.g. "Night Owl", "Focus King").
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+### Frontend (Mobile App)
+- **Framework**: React Native with **Expo SDK 56**.
+- **Navigation**: File-based **Expo Router (v3)** routing stacks and modals.
+- **State Management**: **Zustand** stores for auth profiles and study progress.
+- **Styling**: **NativeWind (Tailwind CSS v4)** for modular design tokens.
+- **Animations**: **React Native Reanimated (v4)** for 3D card flips, breathing rings, and waveform indicators.
+- **Icons**: **Lucide React Native**.
+
+### Backend (AI Engine)
+- **Framework**: **FastAPI** with `uvicorn` server execution.
+- **Orchestration**: **LangChain** prompting chains and Pydantic schemas.
+- **Vector Database**: **Supabase (pgvector)** table chunk search matchers.
+- **Embeddings**: HuggingFace local models (`all-MiniLM-L6-v2`).
+- **LLM Engine**: **Groq Cloud API** (ChatGroq running `llama-3.1-70b-versatile`).
+
+---
+
+## 🚀 Setup & Execution Guide
+
+### 1. Run React Native Frontend
+1. Install node dependencies:
    ```bash
    npm install
    ```
-
-2. Start the app
-
+2. Verify environment keys in the root `.env` file:
+   ```env
+   EXPO_PUBLIC_SUPABASE_URL=https://your-supabase-url.supabase.co
+   EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   ```
+3. Start the dev server:
    ```bash
    npx expo start
    ```
+4. Run on your device: Scan the QR code using your phone's camera (iOS) or the **Expo Go** application (Android).
 
-In the output, you'll find options to open the app in a
+### 2. Run FastAPI AI Backend
+1. Navigate to the `backend/` directory:
+   ```bash
+   cd backend
+   ```
+2. Create and activate a python virtual environment:
+   * **Windows**: `python -m venv venv && .\venv\Scripts\activate`
+   * **macOS/Linux**: `python3 -m venv venv && source venv/bin/activate`
+3. Install packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Verify environment credentials in `backend/.env`:
+   ```env
+   GROQ_API_KEY=gsk_your_groq_key
+   SUPABASE_URL=https://your-supabase-url.supabase.co
+   SUPABASE_SERVICE_KEY=your-supabase-service-key
+   ```
+5. Launch the backend:
+   ```bash
+   python -m app.main
+   ```
+6. Access interactive API Swagger documentation at `http://localhost:8000/docs`.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
+## 🔍 Code Validation & Quality Checks
+To verify typescript build compile health:
 ```bash
-npm run reset-project
+npx tsc --noEmit
 ```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+**Status**: Builds cleanly with **zero warnings or errors**.
