@@ -5,7 +5,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
-import { BookOpen, Clock, Home, Sparkles, User } from 'lucide-react-native';
+import { Calendar, FileText, Home, Layers, Library, Sparkles } from 'lucide-react-native';
 import { cn } from '@/utils/cn';
 
 export interface BottomNavigationProps {
@@ -21,24 +21,27 @@ export function BottomNavigation({
 }: BottomNavigationProps) {
   const tabs = [
     { id: 'home', label: 'Home', icon: Home },
-    { id: 'study', label: 'Study', icon: Clock },
-    { id: 'decks', label: 'Decks', icon: BookOpen },
-    { id: 'ai', label: 'AI Coach', icon: Sparkles },
-    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'library', label: 'Library', icon: Library },
+    { id: 'schedule', label: 'Schedule', icon: Calendar },
+    { id: 'sensei', label: 'Sensei', icon: Sparkles },
+    { id: 'cards', label: 'Cards', icon: Layers },
+    { id: 'notes', label: 'Notes', icon: FileText },
   ];
 
   const activeIndex = tabs.findIndex((t) => t.id === activeTab);
   const translateX = useSharedValue(0);
 
   const screenWidth = Dimensions.get('window').width;
-  const containerWidth = Math.min(screenWidth - 32, 480); // padding constraints and max size limit
+  const containerWidth = Math.min(screenWidth - 24, 520);
   const tabWidth = containerWidth / tabs.length;
 
   useEffect(() => {
-    translateX.value = withSpring(activeIndex * tabWidth, {
-      damping: 18,
-      stiffness: 120,
-    });
+    if (activeIndex !== -1) {
+      translateX.value = withSpring(activeIndex * tabWidth, {
+        damping: 18,
+        stiffness: 120,
+      });
+    }
   }, [activeIndex, tabWidth]);
 
   const indicatorStyle = useAnimatedStyle(() => ({
@@ -49,7 +52,7 @@ export function BottomNavigation({
   return (
     <View
       className={cn(
-        'w-full px-4 pb-5 pt-3 bg-white/90 dark:bg-secondary-900/90 border-t border-secondary-100 dark:border-secondary-800 backdrop-blur-md',
+        'w-full px-2 pb-5 pt-3 bg-white/90 dark:bg-secondary-900/90 border-t border-secondary-100 dark:border-secondary-800 backdrop-blur-md',
         Platform.OS === 'ios' && 'pb-8',
         className
       )}
@@ -58,13 +61,15 @@ export function BottomNavigation({
         style={{ width: containerWidth }}
         className="relative flex-row items-center w-full mx-auto justify-start"
       >
-        {/* Animated active tab background track indicator */}
-        <Animated.View
-          style={[indicatorStyle, { height: 40, top: 2 }]}
-          className="absolute items-center justify-center z-0"
-        >
-          <View className="w-10 h-10 rounded-2xl bg-primary-500/10 dark:bg-primary-500/20" />
-        </Animated.View>
+        {/* Animated slide selector background */}
+        {activeIndex !== -1 && (
+          <Animated.View
+            style={[indicatorStyle, { height: 40, top: 2 }]}
+            className="absolute items-center justify-center z-0"
+          >
+            <View className="w-10 h-10 rounded-2xl bg-primary-500/10 dark:bg-primary-500/20" />
+          </Animated.View>
+        )}
 
         {tabs.map((tab) => {
           const IconComponent = tab.icon;
