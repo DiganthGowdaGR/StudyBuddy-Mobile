@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { ScreenContainer, Typography, Card, Header, Icon, Input, Button } from '@/components/ui';
 import { useStudyStore } from '@/store/useStudyStore';
 
 export default function CardsScreen() {
+  const router = useRouter();
   const [search, setSearch] = useState('');
   const decks = useStudyStore((state) => state.decks);
   const addDeck = useStudyStore((state) => state.addDeck);
@@ -35,7 +37,7 @@ export default function CardsScreen() {
         createdAt: new Date().toISOString(),
       });
     }
-  }, []);
+  }, [decks]);
 
   const filteredDecks = decks.filter((deck) =>
     deck.title.toLowerCase().includes(search.toLowerCase())
@@ -56,9 +58,10 @@ export default function CardsScreen() {
         <View className="flex-row justify-between items-center mb-4 mt-2">
           <Typography variant="h3" className="font-bold">My Decks</Typography>
           <Button
-            title="Create Deck"
+            title="Create Card"
             variant="text"
             size="sm"
+            onPress={() => router.push('/flashcards-create')}
             leftIcon={<Icon name="Plus" size={16} color="#8b5cf6" />}
           />
         </View>
@@ -85,6 +88,12 @@ export default function CardsScreen() {
                   size="sm"
                   variant="primary"
                   className="px-4 py-2"
+                  onPress={() =>
+                    router.push({
+                      pathname: '/flashcards-review',
+                      params: { deckId: deck.id, title: deck.title },
+                    })
+                  }
                 />
               </View>
             </Card>
