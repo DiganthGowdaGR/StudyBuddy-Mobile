@@ -1,9 +1,10 @@
 import { create } from 'zustand';
-import { StudySession, Deck } from '@/types/study';
+import { StudySession, Deck, Flashcard } from '@/types/study';
 
 interface StudyStore {
   sessions: StudySession[];
   decks: Deck[];
+  flashcards: Flashcard[];
   activeSession: StudySession | null;
   startSession: (subject: string, mode: StudySession['mode']) => void;
   updateActiveSessionDuration: (seconds: number) => void;
@@ -11,11 +12,14 @@ interface StudyStore {
   addSession: (session: StudySession) => void;
   setDecks: (decks: Deck[]) => void;
   addDeck: (deck: Deck) => void;
+  addFlashcard: (card: Flashcard) => void;
+  incrementCardCount: (deckId: string) => void;
 }
 
 export const useStudyStore = create<StudyStore>((set, get) => ({
   sessions: [],
   decks: [],
+  flashcards: [],
   activeSession: null,
 
   startSession: (subject, mode) => {
@@ -34,7 +38,6 @@ export const useStudyStore = create<StudyStore>((set, get) => ({
   updateActiveSessionDuration: (seconds) => {
     set((state) => {
       if (!state.activeSession) return state;
-      // 1 XP earned per 60 seconds (1 minute) of focused study
       const durationSeconds = state.activeSession.durationSeconds + seconds;
       const xpEarned = Math.floor(durationSeconds / 60);
       return {
@@ -72,5 +75,17 @@ export const useStudyStore = create<StudyStore>((set, get) => ({
 
   addDeck: (deck) => {
     set((state) => ({ decks: [deck, ...state.decks] }));
+  },
+
+  addFlashcard: (card) => {
+    set((state) => ({ flashcards: [...state.flashcards, card] }));
+  },
+
+  incrementCardCount: (deckId) => {
+    set((state) => ({
+      decks: state.decks.map((d) =>
+        d.id === deckId ? { ...d, cardCount: d.cardCount + 1 } : d
+      ),
+    }));
   },
 }));
