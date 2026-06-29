@@ -2,7 +2,7 @@ import React from 'react';
 import { Pressable, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '@/store/useAuthStore';
-import { ScreenContainer, Typography, Card, Header, Icon } from '@/components/ui';
+import { ScreenContainer, Typography, Card, Header, Icon, Button } from '@/components/ui';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -71,6 +71,19 @@ export default function ProfileScreen() {
             <Typography variant="bodySm" color="muted" className="font-bold text-secondary-500">60% to Level 3</Typography>
           </View>
         </Card>
+
+        <Button
+          title="View Detailed Analytics"
+          onPress={() => {
+            router.back();
+            setTimeout(() => {
+              router.push('/analytics');
+            }, 100);
+          }}
+          variant="outline"
+          className="w-full rounded-xl py-3 mt-4 border-primary-500"
+          leftIcon={<Icon name="TrendingUp" size={16} color="#8b5cf6" />}
+        />
       </ScreenContainer>
     </ScreenContainer>
   );

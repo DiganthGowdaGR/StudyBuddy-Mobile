@@ -90,7 +90,11 @@ export default function HomeDashboardScreen() {
           </Pressable>
         </View>
 
-        <Card variant="glass" className="border border-primary-100/10 p-5">
+        <Card
+          variant="glass"
+          onPress={() => router.push('/analytics')}
+          className="border border-primary-100/10 p-5"
+        >
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-3.5 flex-1 mr-4">
               <ProgressRing progress={25 / 30} size={68} strokeWidth={7} />
