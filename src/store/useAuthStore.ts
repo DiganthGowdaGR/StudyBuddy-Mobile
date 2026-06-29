@@ -9,6 +9,8 @@ interface AuthStore {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isOffline: boolean;
+  setIsOffline: (isOffline: boolean) => void;
   login: (user: User, token: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUserXP: (xp: number) => void;
@@ -22,6 +24,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   token: null,
   isAuthenticated: false,
   isLoading: false,
+  isOffline: false,
+  setIsOffline: (isOffline) => set({ isOffline }),
 
   login: async (user, token) => {
     set({ isLoading: true });
@@ -58,8 +62,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       storage.setItem('auth_user', JSON.stringify(updatedUser));
       
       // Sync remote database
-      dbService.updateProfile(state.user.id, updatedUser).catch((e) => {
+      dbService.updateProfile(state.user.id, updatedUser).then(() => {
+        set({ isOffline: false });
+      }).catch((e) => {
         console.warn('Remote XP sync deferred', e.message);
+        set({ isOffline: true });
       });
 
       return { user: updatedUser };
@@ -79,8 +86,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       storage.setItem('auth_user', JSON.stringify(updatedUser));
       
       // Sync remote database
-      dbService.updateProfile(state.user.id, updatedUser).catch((e) => {
+      dbService.updateProfile(state.user.id, updatedUser).then(() => {
+        set({ isOffline: false });
+      }).catch((e) => {
         console.warn('Remote streak sync deferred', e.message);
+        set({ isOffline: true });
       });
 
       return { user: updatedUser };

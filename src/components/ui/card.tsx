@@ -96,6 +96,9 @@ export function Card({
         onPressOut={handlePressOut}
         style={containerStyleProps as any}
         className={cardClasses}
+        accessible={onPress ? true : undefined}
+        accessibilityRole={onPress ? 'button' : undefined}
+        accessibilityLabel={typeof header === 'string' ? header : 'Card Item'}
       >
         <GlassView style={styles.glassContainer} glassEffectStyle="regular">
           {renderCardContent()}
@@ -111,6 +114,9 @@ export function Card({
       onPressOut={handlePressOut}
       style={containerStyleProps as any}
       className={cardClasses}
+      accessible={onPress ? true : undefined}
+      accessibilityRole={onPress ? 'button' : undefined}
+      accessibilityLabel={typeof header === 'string' ? header : 'Card Item'}
     >
       {renderCardContent()}
     </ContainerComponent>

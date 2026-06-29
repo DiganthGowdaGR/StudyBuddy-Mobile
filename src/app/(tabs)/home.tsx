@@ -28,24 +28,7 @@ const WEEK_DAYS = [
 export default function HomeDashboardScreen() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
-
-  const rightHeaderActions = (
-    <View className="flex-row items-center gap-3">
-      <Pressable
-        onPress={() => router.push('/profile')}
-        className="rounded-full active:opacity-70 justify-center items-center"
-      >
-        <Avatar name={user?.name || 'Study Buddy'} size="sm" border />
-      </Pressable>
-
-      <Pressable
-        onPress={() => router.push('/settings')}
-        className="p-2 rounded-full active:bg-secondary-100 dark:active:bg-secondary-900 justify-center items-center"
-      >
-        <Icon name="Settings" size={20} color="#64748b" />
-      </Pressable>
-    </View>
-  );
+  const isOffline = useAuthStore((state) => state.isOffline);
 
   const getGreeting = () => {
     const hours = new Date().getHours();
@@ -54,6 +37,23 @@ export default function HomeDashboardScreen() {
     return 'Good Evening';
   };
 
+  const rightHeaderActions = (
+    <View className="flex-row gap-3">
+      <Pressable
+        onPress={() => router.push('/settings')}
+        className="w-10 h-10 rounded-full active:bg-secondary-100 dark:active:bg-secondary-900 justify-center items-center"
+      >
+        <Icon name="Settings" size={20} color="#64748b" />
+      </Pressable>
+      <Pressable
+        onPress={() => router.push('/profile')}
+        className="w-10 h-10 rounded-full active:bg-secondary-100 dark:active:bg-secondary-900 justify-center items-center"
+      >
+        <Icon name="User" size={20} color="#64748b" />
+      </Pressable>
+    </View>
+  );
+
   return (
     <ScreenContainer safeArea={false} className="bg-secondary-50 dark:bg-secondary-950 flex-1">
       <Header
@@ -61,6 +61,15 @@ export default function HomeDashboardScreen() {
         subtitle={new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}
         rightAction={rightHeaderActions}
       />
+
+      {isOffline && (
+        <View className="bg-orange-500 py-2.5 px-4 flex-row items-center justify-center gap-2">
+          <Icon name="AlertCircle" size={14} color="#ffffff" />
+          <Typography variant="caption" className="text-white font-bold">
+            Working Offline • Data is cached locally
+          </Typography>
+        </View>
+      )}
 
       <ScreenContainer scrollable safeArea={false} className="bg-transparent p-0 flex-1" contentContainerClassName="p-5 gap-6">
         

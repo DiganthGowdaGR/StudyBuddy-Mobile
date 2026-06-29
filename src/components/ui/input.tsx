@@ -70,6 +70,8 @@ export function Input({
           secureTextEntry={shouldSecureText}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          accessible={true}
+          accessibilityLabel={label || props.placeholder || 'Text Input'}
           {...props}
         />
 
